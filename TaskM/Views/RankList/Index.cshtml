@@ -1,0 +1,285 @@
+﻿
+@{
+    ViewBag.Title = "Rank";
+}
+
+@model IEnumerable<Models.Entity_Models.RankList>
+
+<div id="content">
+
+    <div class="col-md-12 top-20 padding-0">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-heading"><h3><b>Rank</b></h3></div>
+                <div class="panel-body">
+                    <div class="responsive-table">
+
+                        <div class="dt-buttons">
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:search();"><i class="fa fa-search"></i></a>
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:ReloadTable();"><i class="fa fa-refresh"></i></a>
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:ShowInputModal();"><i class="fa fa-user-plus"></i></a>
+                        </div>
+
+                        <br />
+                        <table id="rankListTable" class="table table-bordered table-striped table-hover" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>                                    
+                                    <th>Details</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--#region Input Modal-->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="inputModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>@ViewBag.Title</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="inputForm" role="form" method="post">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="name" name="Name" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Name</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="detail" name="Detail" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Detail</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="status" name="status" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Status</label>
+                    </div>
+                </form>
+
+                <div class="modal-footer">
+                    <button type="button" id="submit_button" class="btn btn-success" onclick="saveData()">Save</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+<!-- #region Search Modal -->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="searchModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>@ViewBag.Title</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="inputForm" role="form" method="post">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="sname" name="Name" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Name</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="sdetail" name="Detail" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Detail</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="sstatus" name="Status" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Status</label>
+                    </div>
+                </form>
+
+                <div class="modal-footer">
+                    <button type="button" id="submit_button" class="btn btn-success" onclick="searchInTable()">Search</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            //$('#departmentTable').DataTable();
+        });
+
+        function ReloadTable() {
+            table.ajax.reload();
+        }
+
+        // #region Table Data
+        var table = $('#rankListTable').DataTable({
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: '/RankList/GetList',
+                type: 'POST',
+                dataType: "JSON"
+            },
+            columns: [
+                { data: "Name" },
+                { data: "Detail" },
+                { data: "Status" },
+                {
+                    data: null, width: 50, orderable: false, render: function (data, type, row) {
+                        return "<a href='javascript:EditData(" + row.Id + ");'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;<a href='javascript:DeleteData(" + row.Id + ");'><i class='fa fa-trash'></i></a>";
+                    }
+                }
+            ],
+            dom: '<"top"Bi>tr<"bottom"p><"clear">',
+            lengthMenu:
+            [[10, 25, 50, 100, 500, -1], ['10 rows', '25 rows', '50 rows', '100 rows', '500 rows', 'Show all']],
+            buttons: ['pageLength', 'print']
+        });
+        // #endregion
+
+
+        // #region Input Data
+
+        function ShowInputModal() {
+            $("#inputForm").trigger("reset");
+            $('#iId').val(0);
+            $('#inputModal').modal('show');
+        }
+        function saveData() {
+            $("#inputForm").submit();
+        }
+        $("#inputForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/RankList/Save',
+                data: frmValues
+            })
+                .done(function (result) {
+                    if (result) {
+                        alert(result.info);
+                        $('#inputModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+// #endregion
+
+
+        // #region Edit Data
+
+        function EditData(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '/RankList/GetDetails',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#iId').val(result.Data.Id);
+                        $('#name').val(result.Data.Name);
+                        $('#detail').val(result.Data.Detail);
+                        $('#status').val(result.Data.Status);
+                        $('#inputModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+        // #endregion
+
+
+        // #region Delete Data
+
+        function DeleteData(Id) {
+            console.log(Id);
+            if (confirm('Are You Sure You Want to Delete?')) {
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/RankList/Delete',
+                    data: { id: Id }
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            table.ajax.reload();
+                        }
+                    })
+                    .fail(function (xhr) {
+                        alert("error");
+                    });
+
+            } else {
+                // Do nothing!
+
+                return;
+            }
+        }
+
+        // #endregion
+
+
+        //#region Search Data
+        function search() {
+            $('#searchModal').modal('toggle');
+        }
+        function setSearchVals(sname, sdetail, sstatus) {
+            //table.search(searchAny);
+            table.columns(0).search(sname);
+            table.columns(1).search(sdetail);
+            table.columns(2).search(sstatus);
+        }
+        function searchInTable() {
+            setSearchVals($('#sname').val(), $('#sdetail').val(), $('#sstatus').val());
+            table.ajax.reload();
+        }
+        function clearSearch() {
+            $('#sname').val('');
+            $('#sdetail').val('');
+            $('#sstatus').val('');
+        }
+//#endregion
+
+    </script>
+}

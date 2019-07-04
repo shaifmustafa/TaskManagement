@@ -1,0 +1,495 @@
+﻿@model IEnumerable<Models.Entity_Models.Group>
+
+@{
+    ViewBag.Title = "Group";
+}
+
+
+<div id="content">
+
+    <div class="col-md-12 top-20 padding-0">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-heading"><h3><b>Group</b></h3></div>
+                <div class="panel-body">
+                    <div class="responsive-table">
+
+                        <div class="dt-buttons">
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:search();"><i class="fa fa-search"></i></a>
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:ReloadTable();"><i class="fa fa-refresh"></i></a>
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:ShowInputModal();"><i class="fa fa-user-plus"></i></a>
+                        </div>
+
+                        <br />
+                        <table id="groupTable" class="table table-bordered table-striped table-hover" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Short Name</th>
+                                    <th>Details</th>
+                                    @*<th>Employee</th>*@
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--#region Input Modal-->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="inputModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>@ViewBag.Title</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="inputForm" role="form" method="post">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="name" name="Name" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Name</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="shortName" name="ShortName" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Short Name</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="detail" name="Details" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Detail</label>
+                    </div>                                       
+
+                    @*@foreach (var items in Model)
+                    {
+                        <div>
+                            @items.EmployeeInfoName
+                        </div>
+                    }*@
+
+                </form>
+
+                <div class="modal-footer">
+                    <button type="button" id="submit_button" class="btn btn-success" onclick="saveData()">Save</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+
+<!--#region EDIT Modal-->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="editModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>Employees</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="editForm" role="form" method="post">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+                    <div class="form-group" style="margin-top:40px !important; align-content:center">
+                        <select class="form-control" multiple id="editemployeeInfoId" name="EmployeeArray" required></select>
+                    </div>                     
+
+                    <div id="listEmployees" style="margin-top:40px !important; text-align:center; font-size: 16px;">
+                        @*<br />*@
+                    </div>
+
+                    </form>
+            </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="edit_submit_button" class="btn btn-success" onclick="editsaveData()">Save</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<!--#endregion-->
+
+
+<!-- #region Search Modal -->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="searchModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>@ViewBag.Title</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="inputForm" role="form" method="post">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="sname" name="Name" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Name</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="sshortName" name="ShortName" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Short Name</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="sdetail" name="Details" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Detail</label>
+                    </div>
+                </form>
+
+                <div class="modal-footer">
+                    <button type="button" id="submit_button" class="btn btn-success" onclick="searchInTable()">Search</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+
+@section scripts
+{
+    <script>
+       
+        function ReloadTable() {
+            table.ajax.reload();
+        }
+
+
+        $.ajax({
+            type: 'Get',
+            url: '/EmployeeInfo/EmployeeList'
+        })
+            .done(function (result) {
+                if (result.status) {
+                    //$('#employeeInfoId').append('<option value="">--Select Employee--</option>' + "<br/>").css('text-align', 'center');
+                    //$('#editemployeeInfoId').append('<option value="">--Select Employee--</option>' + "<br/>").css('text-align', 'center');
+                    $('#semployeeInfoId').append('<option value="">--Select Employee--</option>');
+                    $.each(result.Data, function () {
+                        //$('#employeeInfoId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                        $('#semployeeInfoId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                    });
+                }
+            })
+            .fail(function (xhr) {
+                alert("error");
+            });
+
+
+        // #region Table Data
+        var table = $('#groupTable').DataTable({
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: '/Group/GetList',
+                type: 'POST',
+                dataType: "JSON"
+            },
+            columns: [
+                { data: "Name" },
+                { data: "ShortName" },
+                { data: "Details" },
+                //{ data: "EmployeeInfoName"},
+                {
+                    data: null, width: 50, orderable: false, render: function (data, type, row) {
+                        return "<a href='javascript:ShowEmployee(" + row.Id + ");'><i class='fa fa-eye'></i></a>&nbsp;<a href='javascript:EditData(" + row.Id + ");'><i class='fa fa-edit'></i></a> <a href='javascript:DeleteData(" + row.Id + ");'><i class='fa fa-trash'></i></a>";
+                    }
+                }
+            ],
+            dom: '<"top"Bi>tr<"bottom"p><"clear">',
+            lengthMenu:
+            [[10, 25, 50, 100, 500, -1], ['10 rows', '25 rows', '50 rows', '100 rows', '500 rows', 'Show all']],
+            buttons: ['pageLength', 'print']
+        });
+        // #endregion
+
+
+        // #region Input Data
+
+        function ShowInputModal() {
+            $("#inputForm").trigger("reset");
+            $('#iId').val(0);
+            $('#inputModal').modal('show');
+        }
+        function saveData() {
+            $("#inputForm").submit();
+        }
+        $("#inputForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/Group/Save',
+                data: frmValues
+            })
+                .done(function (result) {
+                    if (result) {
+                        alert(result.info);
+                        $('#inputModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+// #endregion
+
+
+        // #region Edit Data
+
+        function EditData(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '/Group/GetDetails',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#iId').val(result.Data.Id);
+                        $('#name').val(result.Data.Name);
+                        $('#shortName').val(result.Data.ShortName);
+                        $('#detail').val(result.Data.Details);
+                        $('#employeeInfoId').empty();
+
+                        //var selected = [];
+                        //$('#employeeInfoId :selected').each(function () {
+                        //    selected[$(this).val()] = $(this).text();
+                        //});
+                        //console.log(selected);
+
+                        $('#inputModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+        // #endregion
+
+
+
+        $(document).ready(function () {            
+
+            $('#editemployeeInfoId').empty();
+
+            $.ajax({
+                type: 'Get',
+                url: '/EmployeeInfo/EmployeeList'
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#editemployeeInfoId').empty();
+                        $('#editemployeeInfoId').append('<option value="">--Select Employee--</option>' + "<br/>").css('text-align', 'center');
+
+                        $.each(result.Data, function () {
+                            $('#editemployeeInfoId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                            $('#editemployeeInfoId').selectpicker('refresh');
+                        });
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+
+
+
+        // #region Edit Data
+
+        function ShowEmployee(Id) {           
+
+            $.ajax({
+                type: 'POST',
+                url: '/Group/GetEmployees',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.Data) {                        
+
+                        var employeeInfoName = result.Data.map(a => a.EmployeeInfoName);
+                        var employeeId = result.Data.map(b => b.EmployeeInfoId);
+                        var groupDetailsId = result.Data.map(c => c.Id);
+                        var groupName = result.Data.map(d => d.GroupName);
+                        var groupId = result.Data.map(e => e.GroupId);
+
+                        $("#listEmployees").html("");
+
+                        for (var i = 0; i < employeeInfoName.length; i++)
+                        {                            
+                            $("#listEmployees").append(employeeInfoName[i] + " ");
+                            $("#listEmployees").append("&nbsp;&nbsp;<a href='javascript:DeleteEmployee(" + groupDetailsId[i] + ");'><i class='fa fa-trash'></i></a>" + "<br/>" + "<br/>");                            
+                            $("#listEmployees").append().css({ "border-bottom": "2px solid #32CD32" });
+                        }
+                                                
+
+                        console.log(groupId);
+                        //alert(resultShow);
+                        $('#editModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+        // #endregion
+
+
+        // #region Save Edit Data
+
+        function editsaveData() {
+            $("#editForm").submit();
+        }
+        $("#editForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/Group/SaveEditData',
+                data: frmValues
+            })
+                .done(function (result) {
+                    if (result) {
+                        alert(result.info);
+                        $('#editModal').modal('hide');                        
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+
+        // #endRegion
+
+
+
+        // #region Delete Data
+
+        function DeleteData(Id) {
+            console.log(Id);
+            if (confirm('Are You Sure You Want to Delete?')) {
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Group/Delete',
+                    data: { id: Id }
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            table.ajax.reload();
+                        }
+                    })
+                    .fail(function (xhr) {
+                        alert("error");
+                    });
+
+            } else {
+                // Do nothing!
+
+                return;
+            }
+        }
+
+        // #endregion
+
+
+
+        // #region Delete Employee
+
+        function DeleteEmployee(Id) {
+            console.log(Id);
+            if (confirm('Are You Sure You Want to Delete?')) {
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Group/DeleteEmployee',
+                    data: { id: Id }
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            $('#editModal').modal('hide');
+                            //$('#editModal').modal('show');
+                        }
+                    })
+                    .fail(function (xhr) {
+                        alert("error");
+                        $('#editModal').modal('hide');
+                    });
+
+            } else {
+                // Do nothing!
+
+                return;
+            }
+        }
+
+        // #endregion
+
+
+
+        //#region Search Data
+        function search() {
+            $('#searchModal').modal('toggle');
+        }
+        function setSearchVals(sname, sshortName, sdetail) {
+            //table.search(searchAny);
+            table.columns(0).search(sname);
+            table.columns(1).search(sshortName);
+            table.columns(2).search(sdetail);
+        }
+        function searchInTable() {
+            setSearchVals($('#sname').val(), $('#sshortName').val(), $('#sdetail').val());
+            table.ajax.reload();
+        }
+        function clearSearch() {
+            $('#sname').val('');
+            $('#sshortName').val('');
+            $('#sdetail').val('');
+        }
+//#endregion
+
+    </script>
+}

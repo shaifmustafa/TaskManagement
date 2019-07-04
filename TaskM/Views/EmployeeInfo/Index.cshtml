@@ -1,0 +1,512 @@
+﻿
+@{
+    ViewBag.Title = "Employee Info";
+}
+
+@model IEnumerable<Models.Entity_Models.EmployeeInfo>
+
+<div id="content">
+
+    <div class="col-md-12 top-20 padding-0">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-heading"><h3><b>Employee List</b></h3></div>
+                <div class="panel-body">
+                    <div class="responsive-table">
+
+                        <div class="dt-buttons">
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:search();"><i class="fa fa-search"></i></a>
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:ReloadTable();"><i class="fa fa-refresh"></i></a>
+                            <a @*style="color: #30c59c !important;"*@ href="javascript:ShowInputModal();"><i class="fa fa-user-plus"></i></a>
+                        </div>
+
+                        <br />
+                        <table id="employeeInfoTable" class="table table-bordered table-striped table-hover" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Company</th>
+                                    <th>Rank</th>
+                                    <th>Mobile</th>
+                                    @*<th>Emergency Mobile</th>*@
+                                    <th>Address</th>
+                                    <th>Email</th>
+                                    <th>Designation</th>
+                                    <th>Entry Date</th>
+                                    @*<th>Date of Birth</th>*@
+                                    <th>Joining Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--#region Input Modal-->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="inputModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>@ViewBag.Title</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="inputForm" role="form" method="post">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="name" name="Name" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Name</label>
+                    </div>
+
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="departmentId" name="DepartmentId" required></select>                        
+                    </div>
+
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="companyListId" name="CompanyListId" required></select>
+                    </div>    
+                    
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="rankListId" name="RankListId" required></select>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="mobile" name="Mobile" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Mobile No.</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="emergencyMobile" name="EmergencyMobile" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Emergency Mobile No.</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="address" name="Address" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Address</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="email" name="Email" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Email</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="designation" name="Designation" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Designation</label>
+                    </div>
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="entryDate" name="EntryDate" type="text" class="form-control">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            <label>Entry Date</label>
+                        </div>
+                    </div>
+                    <br/>
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="dob" name="Dob" type="text" class="form-control">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            <label>Date of Birth</label>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="joiningDate" name="JoiningDate" type="text" class="form-control">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            <label>Joining Date</label>
+                        </div>
+                    </div>                    
+
+                </form>
+                <br />
+                <br />
+
+                <div class="modal-footer">
+                    <button type="button" id="submit_button" class="btn btn-success" onclick="saveData()">Save</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+<!-- #region Search Modal -->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="searchModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>@ViewBag.Title</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="inputForm" role="form" method="post">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="sname" name="Name" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Name</label>
+                    </div>
+
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="sdepartmentId" name="DepartmentId" required></select>
+                    </div>
+
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="scompanyListId" name="CompanyListId" required></select>
+                    </div>
+
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="srankListId" name="RankListId" required></select>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="smobile" name="Mobile" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Mobile No.</label>
+                    </div>
+
+                    @*<div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="semergencyMobile" name="EmergencyMobile" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Emergency Mobile No.</label>
+                    </div>*@
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="saddress" name="Address" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Address</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="semail" name="Email" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Email</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="sdesignation" name="Designation" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Designation</label>
+                    </div>
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="sentryDate" name="EntryDate" type="text" class="form-control">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            <label>Entry Date</label>
+                        </div>
+                    </div>
+                    <br />
+
+                    @*<div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="sdob" name="Dob" type="text" class="form-control">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            <label>Date of Birth</label>
+                        </div>
+                    </div>
+                    <br />*@
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="sjoiningDate" name="JoiningDate" type="text" class="form-control">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            <label>Joining Date</label>
+                        </div>
+                    </div>
+
+
+                </form>
+
+                <div class="modal-footer">
+                    <button type="button" id="submit_button" class="btn btn-success" onclick="searchInTable()">Search</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+
+@section scripts
+{
+    <script>
+
+        //$('.date').bootstrapMaterialDatePicker({ weekStart: 0, time: false });
+        //$('.dateAnimate').bootstrapMaterialDatePicker({ weekStart: 0, time: false, animation: true });
+
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: '-3d'
+        })
+
+        $(document).ready(function () {
+            //$('#departmentTable').DataTable();
+        });
+
+        function ReloadTable() {
+            table.ajax.reload();
+        }
+
+
+        $.ajax({
+            type: 'Get',
+            url: '/Department/DepartmentList'
+        })
+            .done(function (result) {
+                if (result.status) {
+                    $('#departmentId').append('<option value="">--Select Department--</option>');
+                    $('#sdepartmentId').append('<option value="">--Select Department--</option>');
+                    $.each(result.Data, function () {                        
+                        $('#departmentId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                        $('#sdepartmentId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                    });
+                }
+            })
+            .fail(function (xhr) {
+                alert("error");
+            });
+
+
+        $.ajax({
+            type: 'Get',
+            url: '/CompanyList/CompanyList'
+        })
+            .done(function (result) {
+                if (result.status) {
+                    $('#companyListId').append('<option value="">--Select Company--</option>');
+                    $('#scompanyListId').append('<option value="">--Select Company--</option>');
+                    $.each(result.Data, function () {
+                        $('#companyListId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                        $('#scompanyListId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                    });
+                }
+            })
+            .fail(function (xhr) {
+                alert("error");
+            });
+
+        $.ajax({
+            type: 'Get',
+            url: '/RankList/RankList'
+        })
+            .done(function (result) {
+                if (result.status) {
+                    $('#rankListId').append('<option value="">--Select Rank--</option>');
+                    $('#srankListId').append('<option value="">--Select Rank--</option>');
+                    $.each(result.Data, function () {
+                        $('#rankListId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                        $('#srankListId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                    });
+                }
+            })
+            .fail(function (xhr) {
+                alert("error");
+            });
+
+
+        // #region Table Data
+        var table = $('#employeeInfoTable').DataTable({
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: '/EmployeeInfo/GetList',
+                type: 'POST',
+                dataType: "JSON"
+            },
+            columns: [
+                { data: "Name" },
+                { data: "DepartmentName" },
+                { data: "CompanyListName" },
+                { data: "RankListName"},
+                { data: "Mobile" },                
+                { data: "Address" },
+                { data: "Email" },
+                { data: "Designation" },
+                { data: "EntryDateText" },                
+                { data: "JoiningDateText" },
+                {
+                    data: null, width: 50, orderable: false, render: function (data, type, row) {
+                        console.log(row.Id);
+                        return "<a href='javascript:EditData(" + row.Id + ");'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;<a href='javascript:DeleteData(" + row.Id + ");'><i class='fa fa-trash'></i></a>";
+                    }
+                }
+            ],
+            dom: '<"top"Bi>tr<"bottom"p><"clear">',
+            lengthMenu:
+            [[10, 25, 50, 100, 500, -1], ['10 rows', '25 rows', '50 rows', '100 rows', '500 rows', 'Show all']],
+            buttons: ['pageLength', 'print']
+        });
+        // #endregion
+
+
+        // #region Input Data
+
+        function ShowInputModal() {
+            $("#inputForm").trigger("reset");
+            $('#iId').val(0);
+            $('#inputModal').modal('show');
+        }
+        function saveData() {
+            $("#inputForm").submit();
+        }
+        $("#inputForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/EmployeeInfo/Save',
+                data: frmValues
+            })
+                .done(function (result) {
+                    if (result) {
+                        alert(result.info);
+                        $('#inputModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+// #endregion
+
+
+        // #region Edit Data
+
+        function EditData(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '/EmployeeInfo/GetDetails',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#iId').val(result.Data.Id);
+                        $('#name').val(result.Data.Name);
+                        $('#departmentId').val(result.Data.DepartmentId);
+                        $('#companyListId').val(result.Data.CompanyListId);
+                        $('#rankListId').val(result.Data.RankListId);
+                        $('#mobile').val(result.Data.Mobile);
+                        $('#emergencyMobile').val(result.Data.EmergencyMobile);
+                        $('#address').val(result.Data.Address);
+                        $('#email').val(result.Data.Email);
+                        $('#designation').val(result.Data.Designation);
+                        $('#entryDate').val(result.Data.EntryDateText);
+                        $('#dob').val(result.Data.DobText);
+                        $('#joiningDate').val(result.Data.JoiningDateText);
+                        $('#inputModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+        // #endregion
+
+
+        // #region Delete Data
+
+        function DeleteData(Id) {
+            console.log(Id);
+            if (confirm('Are You Sure You Want to Delete?')) {
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/EmployeeInfo/Delete',
+                    data: { id: Id }
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            table.ajax.reload();
+                        }
+                    })
+                    .fail(function (xhr) {
+                        alert("error");
+                    });
+
+            } else {
+                // Do nothing!
+
+                return;
+            }
+        }
+
+        // #endregion
+
+
+        //#region Search Data
+        function search() {
+            $('#searchModal').modal('toggle');
+        }
+        function setSearchVals(sname, sdepartmentId, scompanyListId, srankListId, smobile, saddress, semail,
+            sdesignation, sentryDate, sjoiningDate) {
+            //table.search(searchAny);
+            table.columns(0).search(sname);
+            table.columns(1).search(sdepartmentId);
+            table.columns(2).search(scompanyListId);
+            table.columns(3).search(srankListId);
+            table.columns(4).search(smobile);
+            //table.columns(5).search(semergencyMobile);
+            table.columns(5).search(saddress);
+            table.columns(6).search(semail);
+            table.columns(7).search(sdesignation);
+            table.columns(8).search(sentryDate);
+            //table.columns(10).search(sdob);
+            table.columns(9).search(sjoiningDate);
+        }
+        function searchInTable() {
+            setSearchVals($('#sname').val(), $('#sdepartmentId').val(), $('#scompanyListId').val(), $('#srankListId'),
+                $('#smobile').val(), $('#saddress').val(), $("#semail").val(), $("#sdesignation").val(), $("#sentryDate").val(),
+                $("#sjoiningDate").val());
+            table.ajax.reload();
+        }
+        function clearSearch() {
+            $('#sname').val('');
+            $('#sdepartmentId').val('');
+            $('#scompanyListId').val('');
+            $('#rankListId').val('');
+            $('#smobile').val('');            
+            $('#saddress').val('');
+            $('#semail').val('');
+            $('#sdesignation').val('');
+            $('#sentryDate').val('');          
+            $('#sjoiningDate').val('');
+        }
+//#endregion
+
+    </script>
+}

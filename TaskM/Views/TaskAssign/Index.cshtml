@@ -1,0 +1,799 @@
+﻿@model IEnumerable<Models.VM.CommentOnTaskVm>
+
+
+@{
+    ViewBag.Title = "Index";
+    string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<div id="content">
+
+    <div class="col-md-12 top-20 padding-0">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-heading"><h3><b>Task Assign </b></h3></div>
+                <div class="panel-body">
+                    <div class="responsive-table">
+
+                        <div class="dt-buttons">
+                            <a href="javascript:search();"><i class="fa fa-search"></i></a>
+                            <a href="javascript:ReloadTable();"><i class="fa fa-refresh"></i></a>
+                            <a href="javascript:ShowInputModal();"><i class="fa fa-user-plus"></i></a>
+                        </div>
+
+                        <br />
+
+                        <div id="tasks" class="col-md-12" style="width: 100%; padding-left: 0%; padding-right: 0%">
+
+                            <div class="col-md-12 tabs-area">
+
+                                <ul class="nav nav-tabs nav-tabs-v6" role="tablist" id="statusType">
+                                    <li role="presentation" class="active">
+                                        <a href="#tabs-demo7-area1" id="tabs-demo6-1" role="tab" data-toggle="tab" aria-expanded="true">
+                                            All Task
+                                            <input type="hidden" class="form-control" />
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="">
+                                        <a href="#tabs-demo7-area2" role="tab" id="tabs-demo6-2" data-toggle="tab" aria-expanded="true">
+                                            On Going
+                                            <input type="hidden" value="Ongoing" class="form-control" />
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="">
+                                        <a href="#tabs-demo7-area3" id="tabs-demo6-3" role="tab" data-toggle="tab" aria-expanded="true">
+                                            In Progress
+                                            <input type="hidden" value="Inprogress" class="form-control" />
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="">
+                                        <a href="#tabs-demo7-area4" role="tab" id="tabs-demo6-4" data-toggle="tab" aria-expanded="true">
+                                            Hold
+                                            <input type="hidden" value="Hold" class="form-control" />
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="">
+                                        <a href="#tabs-demo7-area5" role="tab" id="tabs-demo6-5" data-toggle="tab" aria-expanded="true">
+                                            Complete
+                                            <input type="hidden" value="Complete" class="form-control" />
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div id="tabsDemo6Content" class="tab-content tab-content-v6 col-md-12">
+                                    <div role="tabpanel" value="alltasks" class="tab-pane fade active in" id="tabs-demo7-area1" aria-labelledby="tabs-demo7-area1">
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="tabs-demo7-area2" aria-labelledby="tabs-demo7-area2">
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="tabs-demo7-area3" aria-labelledby="tabs-demo7-area3">
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade  in" id="tabs-demo7-area4" aria-labelledby="tabs-demo7-area4">
+
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade " id="tabs-demo7-area5" aria-labelledby="tabs-demo7-area5">
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+
+                        <table id="taskAssignTable" class="table table-bordered table-striped table-hover" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Short Name</th>
+                                    <th>Task Assign Type</th>
+                                    <th>Task Assign Type Name</th>
+                                    <th>Status</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+                        </table>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region Input Modal-->
+
+<div class=" modal fade in" tabindex="-1" role="dialog" id="inputModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>Create</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="inputForm" role="form" method="post">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="name" name="TaskName" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Task Name</label>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="taskShortName" name="TaskShortName" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Task Short Name</label>
+                    </div>
+
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="taskAssignType" name="TaskAssignType" required>
+                            <option value="Select">Select</option>
+                            <option value="Department">Department</option>
+                            <option value="Group">Group</option>
+                            <option value="Employee">Employee</option>
+                            <option value="Member">Member</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="taskAssignTypeId" name="TaskAssignTypeId" required></select>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+
+                        <select class="form-control" id="priority" name="Priority" required>
+                            <option value="Select">Select</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="taskDetails" name="TaskDetails" type="text" class="form-text" required>
+                        <span class="bar"></span>
+                        <label>Task Details</label>
+                    </div>
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="startDate" name="StartDate" type="text" class="form-control" value="@currentDate">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            <label>Start Date</label>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="endDate" name="EndDate" type="text" class="form-control" value="@currentDate">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            <label>EndDate</label>
+                        </div>
+                    </div>
+                    <br />                    
+
+                </form>
+                <br />
+                <br />
+
+                <div class="modal-footer">
+                    <button type="button" id="submit_button" class="btn btn-success" onclick="saveData()">Save</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+
+
+
+
+<!--#region Edit Modal-->
+
+<div class=" modal fade in" tabindex="-1" role="dialog" id="editModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>Edit</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="editForm" role="form" method="post">
+
+                    <input type="hidden" id="eId" name="Id" value="0" class="form-control" />
+                    <input type="hidden" id="tId" name="TaskAssignTypeId" value="0" class="form-control" />
+
+                    <input type="hidden" id="eCreated" name="Created" value="0" class="form-control" />
+                    <input type="hidden" id="eCreatedBy" name="CreatedBy" value="0" class="form-control" />
+                    <input type="hidden" id="eModified" name="Modified" value="0" class="form-control" />
+                    <input type="hidden" id="eModifiedBy" name="ModifiedBy" value="0" class="form-control" />
+                    <input type="hidden" id="eIsActive" name="IsActive" value="0" class="form-control" />
+
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="ename" name="TaskName" type="text" class="form-text">
+                        <span class="bar"></span>
+                        @*<label>Task Name</label>*@
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="etaskShortName" name="TaskShortName" type="text" class="form-text">
+                        <span class="bar"></span>
+                        @*<label>Task Short Name</label>*@
+                    </div>
+
+                    <div class="form-group" style="margin-top:40px !important;">
+                        <select class="form-control" id="etaskAssignType" name="TaskAssignType">
+                            <option value="Select">Select</option>
+                            <option value="Department">Department</option>
+                            <option value="Group">Group</option>
+                            <option value="Employee">Employee</option>
+                            <option value="Member">Member</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="etaskType" name="TaskType" type="text" class="form-text">
+                        <span class="bar"></span>
+                        @*<label>Assign Name</label>*@
+                    </div>
+
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+
+                        <select class="form-control" id="epriority" name="Priority">
+                            <option value="Select">Select</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <input id="etaskDetails" name="TaskDetails" type="text" class="form-text">
+                        <span class="bar"></span>
+                        @*<label>Task Details</label>*@
+                    </div>
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="estartDate" name="StartDate" type="text" class="form-control" value="@currentDate">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            @*<label>Start Date</label>*@
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                        <input id="eendDate" name="EndDate" type="text" class="form-control" value="@currentDate">
+                        <div class="input-group-addon">
+                            <span class="bar"></span>
+                            @*<label>EndDate</label>*@
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        <select class="form-control" id="echangeStatus" name="Status">
+                            <option value="Select">Select</option>
+                            <option value="Ongoing">Ongoing</option>
+                            <option value="Inprogress">Inprogress</option>
+                            <option value="Hold">Hold</option>
+                            <option value="Complete">Complete</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                        @*<input id="comment" name="Comment" type="text" class="form-text" required>*@
+                        <textarea id="ecomment" name="Comment" class="form-text"></textarea>
+                        <span class="bar"></span>
+                        <label>Comment</label>
+                    </div>
+                    <br />
+
+                </form>
+                <br />
+                <br />
+
+                <div class="modal-footer">
+                    <button type="button" id="submit_button" class="btn btn-success" onclick="saveComment()">Save</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+
+<!--region Chat Message-->
+
+<div class=" modal fade in" tabindex="-1" role="dialog" id="chatModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 style="text-align:center" class="modal-title"><b>Chatting</b></h3>
+            </div>
+            <div class="modal-body">
+                <form class="cmxform" id="chatForm" role="form" method="post">
+
+                    <input type="hidden" id="cId" name="Id" value="0" class="form-control" /> 
+                    <input type="hidden" id="cTaskAssignId" name="TaskAssignId" value="0" class="form-control" />
+
+                    <div class="form-group form-animate-text" style="margin-top:40px !important;">                        
+                        <input type="text" id="cChatMessageText" name="ChatMessageText" class="form-text">
+                        <span class="bar"></span>
+                        <label>Type Message...</label>
+                    </div>
+                    
+                    
+
+                    <div class="modal-footer">
+                        <button type="button" id="submit_button" class="btn btn-success" onclick="saveChat()">Send</button>
+                    </div>
+
+                    <div id="chatMessages" style="margin-top:0px !important; text-align:left; font-size: 18px;">
+                                                
+                        <div id="dateTimeid" style="margin-top:0px !important; text-align:left; font-size: 12px;">
+
+                        </div>
+
+                    </div>
+                    
+
+                    <br />
+
+                </form>
+                <br />
+                <br />                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#endregion-->
+
+
+
+@section scripts
+{
+    <script>
+
+
+        var getValue;
+
+        //$(document).ready(function () {
+        //    getValue = "Ongoing";
+        //});
+
+        $("#statusType li ").click(function () {
+
+            $(this).addClass("activeTask");
+
+            if ($("li.activeTask > a ")) {
+                getValue = $("li.activeTask > a input").val();
+
+                console.log(getValue);
+                $(this).removeClass("activeTask");
+
+
+                table.clear().draw();
+                table.destroy();
+
+                table = $('#taskAssignTable').DataTable({
+                    serverSide: true,
+                    processing: true,
+                    ajax: {
+                        url: '/TaskAssign/GetList',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: { Status: getValue },
+                    },
+                    columns: [
+                        { data: "TaskName" },
+                        { data: "TaskShortName" },
+                        { data: "TaskAssignType" },
+                        { data: "TaskType" },
+                        { data: "Status" },
+                        { data: "StartDateText" },
+                        { data: "EndDateText" },
+                        {
+                            data: null, width: 50, orderable: false, render: function (data, type, row) {
+                                return "<a href='javascript:EditData(" + row.Id + ");'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;<a href='javascript:DeleteData(" + row.Id + ");'><i class='fa fa-trash'></i></a>";
+                            }
+                        }
+                    ],
+                    dom: '<"top"B>tr<"bottom"p><"clear">',
+                    lengthMenu:
+                    [[10, 25, 50, 100, 500, -1], ['10 rows', '25 rows', '50 rows', '100 rows', '500 rows', 'Show all']],
+                    buttons: ['pageLength', 'print']
+                });
+
+                getValue = null;
+
+            }
+
+        });
+
+
+
+        // #region Table Data
+        var table = $('#taskAssignTable').DataTable({
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: '/TaskAssign/GetList',
+                type: 'POST',
+                dataType: "JSON",
+            },
+            columns: [
+                { data: "TaskName" },
+                { data: "TaskShortName" },
+                { data: "TaskAssignType" },
+                { data: "TaskType" },
+                { data: "Status" },
+                { data: "StartDateText" },
+                { data: "EndDateText" },
+                {
+                    data: null, width: 50, orderable: false, render: function (data, type, row) {
+                        return "<a href='javascript:chatMessage(" + row.Id + ");'><i class='fa fa-envelope'></i></a>&nbsp;<a href='javascript:EditData(" + row.Id + ");'><i class='fa fa-eye'></i></a>&nbsp;<a href='javascript:DeleteData(" + row.Id + ");'><i class='fa fa-trash'></i></a>";
+                    }
+                }
+            ],
+            dom: '<"top"B>tr<"bottom"p><"clear">',
+            lengthMenu:
+            [[10, 25, 50, 100, 500, -1], ['10 rows', '25 rows', '50 rows', '100 rows', '500 rows', 'Show all']],
+            buttons: ['pageLength', 'print']
+        });
+        // #endregion
+
+
+
+
+
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+
+        });
+
+        $('#taskAssignType').on('change', function () {
+            var taskAssignType = $("#taskAssignType").val();
+
+            $.ajax({
+                url: '/TaskAssign/GetTaskAssignType',
+                type: 'POST',
+                data: { TaskAssignType: taskAssignType },
+                cache: false,
+                success: function (response) {
+                    if (response.status === true) {
+                        $("#taskAssignTypeId").empty();
+                        $('#taskAssignTypeId').append('<option value="">--Select--</option>');
+                        $.each(response.Data, function () {
+                            $('#taskAssignTypeId').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+
+                        });
+
+                    } else {
+                        alert(response.status);
+                    }
+
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        });
+
+        // #region Input Data
+
+        function ShowInputModal() {
+            $("#inputForm").trigger("reset");
+            $('#iId').val(0);
+            $('#inputModal').modal('show');
+        }
+
+        function ShowCommentModal() {
+            $("#commentForm").trigger("reset");
+            $('#iId').val(0);
+            $('#commentModal').modal('show');
+        }
+
+
+        function saveData() {
+            $("#inputForm").submit();
+        }
+
+        $("#inputForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/TaskAssign/Save',
+                data: frmValues
+            })
+                .done(function (result) {
+                    if (result) {
+                        alert(result.info);
+                        $('#inputModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+
+
+
+        // #region Save Comment
+
+        function saveComment() {
+            $("#editForm").submit();
+        }
+
+        $("#editForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+            //var taskComment = $("#ecomment").val();
+            //console.log(taskComment);
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/TaskAssign/SaveComment',
+                data: frmValues
+            })
+                .done(function (result) {
+                    if (result) {
+                        alert(result.info);
+                        $('#editModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+
+        // #endregion
+
+
+
+        // #region Save Status
+
+        function saveStatus() {
+            $("#statusForm").submit();
+        }
+
+        $("#statusForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/TaskAssign/Save',
+                data: frmValues
+            })
+                .done(function (result) {
+                    if (result) {
+                        alert(result.info);
+                        $('#statusModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+
+
+        // #endregion
+
+
+
+
+        // #region Send Chat Message
+
+        function saveChat()
+        {
+            $('#chatForm').submit();
+        }
+
+
+        $("#chatForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/TaskAssign/SendChatMessage',
+                data: frmValues
+            })
+                .done(function (result) {
+                    if (result) {
+                        console.log(result.message);
+                        //$('#chatMessages').prepend(result.message);
+                        //$('#chatMessages').after("<br/>");
+                        $('#cChatMessageText').val("");
+                        chatMessage(result.tId);
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        });
+
+        // #endregion
+
+
+
+        // #region View Chat Message
+
+        function chatMessage(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '/TaskAssign/ViewChatMessage',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#cId').val(result.Data.Id);
+                        $('#cTaskAssignId').val(result.Data.TaskAssignId);                        
+
+                        $('#chatMessages').empty();
+                        $('#dateTimeid').empty();
+
+                        var chatMsgs = result.Data.map(a => a.ChatMessageText);
+                        var dTime = result.Data.map(b => b.CreatedDateText);
+
+                        for (var i = 0; i < chatMsgs.length; i++) {
+
+                            $('#chatMessages').append(chatMsgs[i] + "<br/>" + '<p style = "font-size: 9px"><i>' + dTime[i] + '</i></p>' + "<br/>" + "<br/>");
+                            //$('#dateTimeid').append(dTime[i] + "<br/>" + "<br/>");
+
+                            // .css('background-color', 'blue');
+                        }
+
+                        console.log(dTime);
+                        $('#chatModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+
+        // #endregion
+
+
+
+        // #region Edit Data
+
+        function EditData(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '/TaskAssign/GetDetails',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#eId').val(result.Data.Id);
+                        $('#tId').val(result.Data.TaskAssignTypeId);
+                        $('#ename').val(result.Data.TaskName).prop("readOnly", "true");
+                        $('#etaskShortName').val(result.Data.TaskShortName).prop("readOnly", "true");
+                        $('#etaskAssignType').val(result.Data.TaskAssignType);
+                        $('#etaskType').val(result.Data.TaskType).prop("readOnly", "true");
+                        $('#epriority').val(result.Data.Priority).prop("readOnly", "true");
+                        $('#etaskDetails').val(result.Data.TaskDetails).prop("readOnly", "true");
+                        $('#estartDate').val(result.Data.StartDateText);
+                        $('#eendDate').val(result.Data.EndDateText).prop("readOnly", "true");
+                        $('#echangeStatus').val(result.Data.Status).prop("readOnly", "true");
+                        $('#eCreated').val(result.Data.Created);
+                        $('#eCreatedBy').val(result.Data.CreatedBy);
+                        $('#eModified').val(result.Data.Modified);
+                        $('#eModifiedBy').val(result.Data.ModifiedBy);
+                        $('#eIsActive').val(result.Data.IsActive);
+                        $('#ecomment').val();
+                        console.log(result.Data);
+                        $('#editModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+        // #endregion
+
+
+
+
+        // #region Comment
+
+        function Status(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '/TaskAssign/GetDetails',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#statusId').val(result.Data.Id);
+                        $('#changeStatus').val(result.Data.Status);
+                        $('#statusModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+        // #endregion
+
+
+
+
+        // #region Delete Data
+
+        function DeleteData(Id) {
+            console.log(Id);
+            if (confirm('Are You Sure You Want to Delete?')) {
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/TaskAssign/Delete',
+                    data: { id: Id }
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            table.ajax.reload();
+                        }
+                    })
+                    .fail(function (xhr) {
+                        alert("error");
+                    });
+
+            } else {
+                // Do nothing!
+
+                return;
+            }
+        }
+
+        // #endregion
+
+
+    </script>
+}
+
